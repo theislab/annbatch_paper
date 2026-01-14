@@ -26,6 +26,10 @@ RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 COPY requirements_aido_cell.txt /tmp/requirements_aido_cell.txt
 RUN pip install --no-cache-dir -r /tmp/requirements_aido_cell.txt
 
+# Try to install optional performance packages (don't fail if they don't build)
+RUN pip install --no-cache-dir ninja || true
+RUN pip install --no-cache-dir flash-attn --no-build-isolation || echo "flash-attn installation skipped (optional)"
+
 # Set working directory
 WORKDIR /workspace/aido_cell_benchmark
 
@@ -34,4 +38,3 @@ COPY . /workspace/aido_cell_benchmark/
 
 # Set default command
 CMD ["/bin/bash"]
-

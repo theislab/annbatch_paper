@@ -107,8 +107,6 @@ def plot_fit_time_vs_loading_speed(results, output_prefix="aido_cell_comparison"
 
     plt.savefig(png_file, dpi=300, bbox_inches='tight')
     plt.savefig(svg_file, bbox_inches='tight')
-
-    print(f"Saved plots: {png_file}, {svg_file}")
     plt.close()
 
 
@@ -176,8 +174,6 @@ def plot_speedup_analysis(results, output_prefix="aido_cell_comparison"):
 
     plt.savefig(png_file, dpi=300, bbox_inches='tight')
     plt.savefig(svg_file, bbox_inches='tight')
-
-    print(f"Saved speedup plots: {png_file}, {svg_file}")
     plt.close()
 
     return speedup_df
@@ -235,30 +231,24 @@ def main():
     args = parser.parse_args()
 
     # Load results
-    print("Loading benchmark results...")
     results = load_results(*args.csv_files)
-
-    print(f"Loaded {len(results)} data points from {len(results['model'].unique())} model(s)")
 
     # Print summary
     print_summary(results)
 
     # Create visualizations
-    print("\nCreating visualizations...")
     plot_fit_time_vs_loading_speed(results, args.output_prefix)
     speedup_df = plot_speedup_analysis(results, args.output_prefix)
 
     # Save combined results
     combined_csv = f"{args.output_prefix}_combined.csv"
     results.to_csv(combined_csv, index=False)
-    print(f"\nSaved combined results to: {combined_csv}")
 
     # Save speedup summary
     speedup_csv = f"{args.output_prefix}_speedup_summary.csv"
     speedup_df.to_csv(speedup_csv, index=False)
-    print(f"Saved speedup summary to: {speedup_csv}")
 
-    print("\nVisualization complete!")
+    print(f"Saved: {combined_csv}, {speedup_csv}")
 
 
 if __name__ == "__main__":

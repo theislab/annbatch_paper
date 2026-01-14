@@ -13,16 +13,13 @@ cd aido_cell_benchmark
 # 1. Install dependencies
 pip install -r requirements_aido_cell.txt
 
-# 2. Test installation
-python test_installation.py
-
-# 3. Run quick test
+# 2. Run quick test
 python benchmark_aido_cell.py --batch-size 4096 --n-batches 3
 
-# 4. Run full benchmark with 4 GPUs
+# 3. Run full benchmark with 4 GPUs
 python benchmark_aido_cell.py --devices 4 --strategy ddp
 
-# 5. Visualize results
+# 4. Visualize results
 python visualize_aido_cell_results.py aido_cell_fit_time_vs_loading_speed.csv
 ```
 
@@ -38,7 +35,6 @@ docker run --gpus all -it --rm \
   aido-cell-benchmark:latest
 
 # Inside container
-python test_installation.py
 python benchmark_aido_cell.py --devices 4
 ```
 
@@ -49,7 +45,6 @@ See [DOCKER_SETUP.md](DOCKER_SETUP.md) for complete Docker documentation.
 ### 📜 Scripts
 - **`benchmark_aido_cell.py`** - Main benchmark script with multi-GPU support
 - **`visualize_aido_cell_results.py`** - Create publication-quality plots
-- **`test_installation.py`** - Verify setup before running
 - **`run_aido_cell_benchmark.sh`** - Automated shell runner
 - **`run_aido_cell_benchmark.sbatch`** - SLURM script for HPC clusters
 

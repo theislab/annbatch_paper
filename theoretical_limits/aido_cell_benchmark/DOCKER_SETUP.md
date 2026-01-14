@@ -26,12 +26,6 @@ docker run --gpus all -it --rm \
 
 ## Using the Container
 
-### Quick Test
-
-```bash
-# Inside the container
-python test_installation.py
-```
 
 ### Run Benchmark
 
@@ -143,13 +137,10 @@ docker run --gpus all -it --rm \
   -v $(pwd):/workspace/aido_cell_benchmark \
   aido-cell-benchmark:latest bash
 
-# 3. Inside container, test installation
-python test_installation.py
-
-# 4. Run benchmark
+# 3. Inside container, run benchmark
 python benchmark_aido_cell.py --devices 4 --strategy ddp
 
-# 5. Visualize results
+# 4. Visualize results
 python visualize_aido_cell_results.py *.csv
 ```
 
@@ -171,7 +162,6 @@ docker run --gpus all -d --name aido-benchmark \
   aido-cell-benchmark:latest tail -f /dev/null
 
 # Execute commands in running container
-docker exec -it aido-benchmark python test_installation.py
 docker exec -it aido-benchmark python benchmark_aido_cell.py --devices 4
 
 # Stop and remove

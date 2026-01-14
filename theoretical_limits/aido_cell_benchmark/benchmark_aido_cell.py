@@ -40,19 +40,12 @@ class AIDOCellModel(pl.LightningModule):
         self.save_hyperparameters()
 
         # Load pretrained model
-        print(f"Loading model: {model_name}")
-        try:
-            self.config = AutoConfig.from_pretrained(model_name, trust_remote_code=True)
-            self.model = AutoModel.from_pretrained(
-                model_name,
-                config=self.config,
-                trust_remote_code=True
-            )
-        except Exception as e:
-            print(f"Error loading model: {e}")
-            print("Make sure you have installed the required packages:")
-            print("pip install transformers accelerate")
-            raise
+        self.config = AutoConfig.from_pretrained(model_name, trust_remote_code=True)
+        self.model = AutoModel.from_pretrained(
+            model_name,
+            config=self.config,
+            trust_remote_code=True
+        )
 
         self.learning_rate = learning_rate
         self.weight_decay = weight_decay
@@ -167,8 +160,6 @@ def train_model(model, batch_size, input_dim, n_classes, n_batches, strategy, de
     # Test across different loading speeds
     # From fast to slow: 4 * 10^(-3) to 4 * 10^1
     for sleep in 4. * np.logspace(-3, 1, 8):
-        print(f"\nTraining with sleep time: {sleep:.4f}s")
-
         trainer = pl.Trainer(
             max_steps=20,
             logger=False,
@@ -190,7 +181,6 @@ def train_model(model, batch_size, input_dim, n_classes, n_batches, strategy, de
         res["fit_time"].append(elapsed)
         res["sleep"].append(sleep)
 
-        print(f"Fit time: {elapsed:.2f}s")
 
         # Reinitialize model for next iteration to ensure fair comparison
         model = type(model)(**model.hparams)
@@ -227,8 +217,6 @@ def benchmark_loader(loader, n_samples, batch_size):
     time_per_sample = (1e6 * execution_time) / (num_iter * batch_size)
     samples_per_sec = num_iter * batch_size / execution_time
 
-    print(f"Time per sample: {time_per_sample:.2f} μs")
-    print(f"Samples per sec: {samples_per_sec:.2f} samples/sec")
 
     return samples_per_sec, time_per_sample, batch_times
 
@@ -291,30 +279,15 @@ def main():
 
     # Check GPU availability
     if not torch.cuda.is_available():
-        print("WARNING: CUDA is not available. Running on CPU.")
         args.devices = 1
         args.strategy = "auto"
     else:
         n_gpus = torch.cuda.device_count()
-        print(f"Found {n_gpus} GPU(s)")
         if args.devices == -1:
             args.devices = n_gpus
-        print(f"Using {args.devices} GPU(s) with strategy: {args.strategy}")
 
     # Constants
     N_CLASSES = 100  # Not really used for AIDO.Cell but needed for MockDataset
-
-    print("\n" + "="*80)
-    print("AIDO.Cell-10M Benchmark Configuration")
-    print("="*80)
-    print(f"Model: {args.model_name}")
-    print(f"Batch size: {args.batch_size}")
-    print(f"Input dimension: {args.input_dim}")
-    print(f"Batches per epoch: {args.n_batches}")
-    print(f"Learning rate: {args.learning_rate}")
-    print(f"Strategy: {args.strategy}")
-    print(f"Devices: {args.devices}")
-    print("="*80 + "\n")
 
     # Initialize model
     model = AIDOCellModel(
@@ -323,7 +296,6 @@ def main():
     )
 
     # Train model across different loading speeds
-    print("Starting training benchmark...")
     results = train_model(
         model,
         args.batch_size,
@@ -335,11 +307,8 @@ def main():
     )
 
     # Benchmark loader performance for each sleep time
-    print("\nBenchmarking data loader performance...")
     samples_per_sec = []
-
     for sleep_time in results.sleep:
-        print(f"\nBenchmarking with sleep time: {sleep_time:.4f}s")
         loader = create_loader(
             args.batch_size,
             sleep_time,
@@ -363,22 +332,13 @@ def main():
     # Save results
     output_path = Path(args.output)
     results.to_csv(output_path, index=False)
-    print(f"\nResults saved to: {output_path}")
+    print(f"Results saved to: {output_path}")
 
     # Print summary
-    print("\n" + "="*80)
-    print("Benchmark Results Summary")
-    print("="*80)
-    print(results.to_string(index=False))
-    print("="*80)
-
-    # Print min/max fit times
     min_fit_time = results.fit_time.min()
     max_fit_time = results.fit_time.max()
     speedup = max_fit_time / min_fit_time
-    print(f"\nMin fit time: {min_fit_time:.2f}s (fastest loading)")
-    print(f"Max fit time: {max_fit_time:.2f}s (slowest loading)")
-    print(f"Speedup: {speedup:.2f}x")
+    print(f"Min fit time: {min_fit_time:.2f}s | Max fit time: {max_fit_time:.2f}s | Speedup: {speedup:.2f}x")
 
 
 if __name__ == "__main__":
