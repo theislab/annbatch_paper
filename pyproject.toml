@@ -9,7 +9,6 @@ description = "Benchmarking different minibatch loaders for AnnData."
 requires-python = ">=3.11"
 license = "BSD-3-Clause"
 authors = [
-    { name = "Alex Wolf" },
     { name = "Ilan Gold" },
     { name = "Felix Fischer" },
 ]
@@ -60,10 +59,7 @@ viz = [
 test = [ "pytest", "pytest-xdist" ]
 
 [tool.hatch.build.targets.wheel]
-packages = [
-    "src/benchmark_loading/arrayloader_benchmarks",
-    "src/theoretical_limits",
-]
+packages = [ "src/benchmark_loading/arrayloader_benchmarks" ]
 
 [tool.ruff]
 src = [ "src" ]
