@@ -1,20 +1,20 @@
 #!/bin/sh
 
-#SBATCH -J annbatch_2
-#SBATCH --output=annbatch_2.%j
-#SBATCH --error=annbatch_2.%j
-#SBATCH --partition=lrz-dgx-a100-40x8-mig
-#SBATCH --qos=mig
+#SBATCH -J parallel_bench
+#SBATCH --output=parallel_bench.%j
+#SBATCH --error=parallel_bench.%j
+#SBATCH --partition=mcml-hgx-a100-80x4-mig
+#SBATCH --qos=mcml
 #SBATCH --gres=gpu:1
 #SBATCH --time 2-00:00:00
-#SBATCH --mem=128GB
-#SBATCH --cpus-per-task=12
+#SBATCH --mem=356GB
+#SBATCH --cpus-per-task=64
 
 
 CONTAINER_IMAGE="/dss/dssfs02/lwp-dss-0001/pn36po/pn36po-dss-0001/di93zer/enroot-images/annbatch.sqsh"
 CONTAINER_MOUNTS="/dss:/dss,/dss/dssfs02/lwp-dss-0001/pn36po/pn36po-dss-0001/di93zer:/mnt/dssfs02"
 
-SCRIPT="/dss/dsshome1/04/di93zer/git/annbatch_paper/src/run_benchmarks_full_dataset.py"
+SCRIPT="/dss/dsshome1/04/di93zer/git/annbatch_paper/src/run_parallel_benchmarks.py"
 GIT_REPO="/dss/dsshome1/04/di93zer/git/annbatch_paper"
 
 
