@@ -36,5 +36,14 @@ WORKDIR /workspace/aido_cell_benchmark
 # Copy benchmark scripts
 COPY . /workspace/aido_cell_benchmark/
 
+# Initialize and install aido.cell submodule
+RUN if [ -d "aido.cell" ]; then \
+        cd aido.cell && \
+        pip install --no-cache-dir -e . && \
+        cd ..; \
+    else \
+        echo "Warning: aido.cell submodule not found, skipping installation"; \
+    fi
+
 # Set default command
 CMD ["/bin/bash"]
