@@ -14,7 +14,7 @@
 CONTAINER_IMAGE="/dss/dssfs02/lwp-dss-0001/pn36po/pn36po-dss-0001/di93zer/enroot-images/annbatch.sqsh"
 CONTAINER_MOUNTS="/dss:/dss,/dss/dssfs02/lwp-dss-0001/pn36po/pn36po-dss-0001/di93zer:/mnt/dssfs02"
 
-SCRIPT="/dss/dsshome1/04/di93zer/git/annbatch_paper/src/run_benchmarks_full_dataset.py"
+SCRIPT="/dss/dsshome1/04/di93zer/git/annbatch_paper/src/benchmark_loading/run_benchmarks_full_dataset.py"
 GIT_REPO="/dss/dsshome1/04/di93zer/git/annbatch_paper"
 
 
