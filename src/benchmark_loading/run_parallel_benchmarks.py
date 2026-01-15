@@ -15,7 +15,7 @@ from pathlib import Path
 import pandas as pd
 
 
-REPO_PATH = Path(__file__).resolve().parent.parent
+REPO_PATH = Path(__file__).resolve().parent.parent.parent
 STORE_PATH_ZARR = Path("/dss/mcmlscratch/04/di93zer/tahoe100M")
 STORE_PATH_H5AD = Path("/dss/mcmlscratch/04/di93zer/tahoe100M_h5ad")
 
@@ -34,7 +34,7 @@ def run_single_benchmark_process(args):
 
     if loader_type == "annbatch":
         cmd = [
-            "python", f"{REPO_PATH}/benchmark_loading/arrayloader_benchmarks/annbatch/benchmark_annbatch.py",
+            "python", f"{REPO_PATH}/src/benchmark_loading/arrayloader_benchmarks/annbatch/benchmark_annbatch.py",
             f"--store_path={STORE_PATH_ZARR}",
             "--chunk_size=256",
             "--preload_nchunks=32",
@@ -44,7 +44,7 @@ def run_single_benchmark_process(args):
         ]
     elif loader_type == "annbatch_gpu":
         cmd = [
-            "python", f"{REPO_PATH}/benchmark_loading/arrayloader_benchmarks/annbatch/benchmark_annbatch.py",
+            "python", f"{REPO_PATH}/src/benchmark_loading/arrayloader_benchmarks/annbatch/benchmark_annbatch.py",
             f"--store_path={STORE_PATH_ZARR}",
             "--chunk_size=256",
             "--preload_nchunks=32",
@@ -54,7 +54,7 @@ def run_single_benchmark_process(args):
         ]
     elif loader_type == "scdataset":
         cmd = [
-            "python", f"{REPO_PATH}/benchmark_loading/arrayloader_benchmarks/scDataset/benchmark_scDataset.py",
+            "python", f"{REPO_PATH}/src/benchmark_loading/arrayloader_benchmarks/scDataset/benchmark_scDataset.py",
             f"--store_path={STORE_PATH_H5AD}",
             "--num_workers=8",
             "--batch_size=4096",
@@ -64,7 +64,7 @@ def run_single_benchmark_process(args):
         ]
     elif loader_type == "mapped_collection":
         cmd = [
-            "python", f"{REPO_PATH}/benchmark_loading/arrayloader_benchmarks/mapped_collection/benchmark_mapped_collection.py",
+            "python", f"{REPO_PATH}/src/benchmark_loading/arrayloader_benchmarks/mapped_collection/benchmark_mapped_collection.py",
             f"--store_path={STORE_PATH_H5AD}",
             "--num_workers=8",
             f"--n_samples={n_samples}"
@@ -247,7 +247,7 @@ def main():
             for r in all_results
         ])
 
-        output_file = f"{REPO_PATH}/benchmark_loading/parallel_loading_benchmark_results.csv"
+        output_file = f"{REPO_PATH}/src/benchmark_loading/parallel_loading_benchmark_results.csv"
         df.to_csv(output_file, index=False)
         print(f"\n{'='*80}")
         print(f"Results saved to: {output_file}")
