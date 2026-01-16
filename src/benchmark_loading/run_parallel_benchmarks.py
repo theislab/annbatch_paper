@@ -20,7 +20,7 @@ STORE_PATH_ZARR = Path("/dss/mcmlscratch/04/di93zer/tahoe100M")
 STORE_PATH_H5AD = Path("/dss/mcmlscratch/04/di93zer/tahoe100M_h5ad")
 
 # Number of samples per process
-N_SAMPLES_PER_PROCESS = 2_000_000
+N_SAMPLES_PER_PROCESS = 1_000_000
 
 
 def run_single_benchmark_process(args):
