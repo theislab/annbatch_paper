@@ -8,7 +8,7 @@ import pandas as pd
 from pathlib import Path
 
 
-REPO_PATH = Path(__file__).resolve().parent.parent
+REPO_PATH = Path(__file__).resolve().parent.parent.parent
 STORE_PATH_ZARR = Path("/dss/mcmlscratch/04/di93zer/tahoe100M")
 STORE_PATH_H5AD = Path("/dss/mcmlscratch/04/di93zer/tahoe100M_h5ad")
 
