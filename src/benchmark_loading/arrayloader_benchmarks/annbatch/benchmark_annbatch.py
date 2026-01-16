@@ -10,7 +10,7 @@ import numpy as np
 import scipy.sparse as sp
 import zarr
 import zarrs  # noqa
-from annbatch import ZarrSparseDataset
+from annbatch import DatasetCollection, Loader
 from torch.utils.data import DataLoader
 from torch.utils.dlpack import from_dlpack
 
@@ -68,22 +68,17 @@ def benchmark(  # noqa: PLR0917, PLR0913
             for artifact in collection.ordered_artifacts.all()
         ]
 
-    ds = ZarrSparseDataset(
-        shuffle=True,
+
+    collection = DatasetCollection(zarr.open(store_path))
+    ds = Loader(
+        batch_size=batch_size,
         chunk_size=chunk_size,
         preload_nchunks=preload_nchunks,
-        batch_size=batch_size,
+        shuffle=True,
         preload_to_gpu=preload_to_gpu,
+        to_torch=True,
     )
-    ds.add_datasets(
-        datasets=[ad.io.sparse_dataset(zarr.open(p)["X"]) for p in store_shards],
-        obs=[
-            ad.io.read_elem(zarr.open(p)["obs"])["cell_line"].to_numpy()
-            for p in store_shards
-        ]
-        if include_obs
-        else None,
-    )
+    ds.use_collection(collection)
 
     n_samples = n_samples if n_samples != -1 else len(ds)
     if use_torch_loader:
