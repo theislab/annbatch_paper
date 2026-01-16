@@ -213,22 +213,31 @@ def main():
 
     all_results = []
 
-    # Run benchmarks for each loader type with varying number of processes
-    for loader_type in loader_types:
-        print(f"\n\n{'#'*80}")
-        print(f"# Benchmarking {loader_type.upper()}")
-        print(f"{'#'*80}")
+    # Number of repetitions for each benchmark configuration
+    num_repetitions = 5
 
-        for num_processes in range(1, 9):
-            result = benchmark_parallel_loading(
-                loader_type=loader_type,
-                num_processes=num_processes,
-                n_samples_per_process=N_SAMPLES_PER_PROCESS
-            )
-            all_results.append(result)
+    # Run benchmarks with repetitions as the outermost loop
+    for repetition in range(1, num_repetitions + 1):
+        print(f"\n\n{'='*80}")
+        print(f"REPETITION {repetition}/{num_repetitions}")
+        print(f"{'='*80}")
 
-            # Small delay between runs to avoid resource conflicts
-            time.sleep(2)
+        for loader_type in loader_types:
+            print(f"\n\n{'#'*80}")
+            print(f"# Benchmarking {loader_type.upper()}")
+            print(f"{'#'*80}")
+
+            for num_processes in range(1, 9):
+                result = benchmark_parallel_loading(
+                    loader_type=loader_type,
+                    num_processes=num_processes,
+                    n_samples_per_process=N_SAMPLES_PER_PROCESS
+                )
+                result["repetition"] = repetition
+                all_results.append(result)
+
+                # Small delay between runs to avoid resource conflicts
+                time.sleep(2)
 
     # Save results to CSV
     if all_results:
@@ -237,6 +246,7 @@ def main():
             {
                 "loader": r["loader"],
                 "num_processes": r["num_processes"],
+                "repetition": r["repetition"],
                 "cumulative_samples_per_sec": r["cumulative_samples_per_sec"],
                 "avg_samples_per_sec_per_process": r["avg_samples_per_sec_per_process"],
                 "total_samples": r["total_samples"],
