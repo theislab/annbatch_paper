@@ -56,7 +56,7 @@ def run_single_benchmark_process(args):
         cmd = [
             "python", f"{REPO_PATH}/src/benchmark_loading/arrayloader_benchmarks/scDataset/benchmark_scDataset.py",
             f"--store_path={STORE_PATH_H5AD}",
-            "--num_workers=8",
+            "--num_workers=6",
             "--batch_size=4096",
             "--block_size=4",
             "--fetch_factor=2",

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import warnings
-from pathlib import Path
 
 import anndata as ad
 import click
@@ -11,7 +10,6 @@ import scipy.sparse as sp
 import zarr
 import zarrs  # noqa
 from annbatch import DatasetCollection, Loader
-from torch.utils.data import DataLoader
 from torch.utils.dlpack import from_dlpack
 
 from arrayloader_benchmarks.utils import benchmark_loader
@@ -34,40 +32,25 @@ def collate_fn(elems):
 
 
 @click.command()
-@click.option("--store_path", type=str, default="")
+@click.option("--store_path", type=str)
 @click.option("--chunk_size", type=int, default=256)
 @click.option("--preload_nchunks", type=int, default=8)
-@click.option("--use_torch_loader", type=bool, default=True)
-@click.option("--num_workers", type=int, default=6)
 @click.option("--batch_size", type=int, default=4096)
-@click.option("--n_samples", type=int, default=2_000_000)
-@click.option("--include_obs", type=bool, default=True)
 @click.option("--preload_to_gpu", type=bool, default=False)
+@click.option("--n_samples", type=int, default=2_000_000)
 def benchmark(  # noqa: PLR0917, PLR0913
-    store_path: str = "",
+    store_path: str,
     chunk_size: int = 256,
-    preload_nchunks: int = 64,
-    use_torch_loader: bool = False,  # noqa: FBT001, FBT002
-    num_workers: int = 6,
+    preload_nchunks: int = 32,
     batch_size: int = 4096,
-    n_samples: int = 2_000_000,
-    include_obs: bool = True,  # noqa: FBT001, FBT002
     preload_to_gpu: bool = False,  # noqa: FBT001, FBT002
+    n_samples: int = 2_000_000,
 ):
-    if store_path:
-        store_shards = list(Path(store_path).glob("*.zarr"))
-    else:
-        import lamindb as ln
-
-        benchmarking_collections = ln.Collection.using(
-            "laminlabs/arrayloader-benchmarks"
+    def load_func(g: zarr.Group) -> ad.AnnData:
+        return ad.AnnData(
+            X=ad.io.sparse_dataset(g["X"]),
+            obs=ad.io.read_elem(g["obs"])[["cell_name"]]
         )
-        collection = benchmarking_collections.get("LaJOdLd0xZ3v5ZBw0000")
-        store_shards = [
-            artifact.cache(batch_size=48)
-            for artifact in collection.ordered_artifacts.all()
-        ]
-
 
     collection = DatasetCollection(zarr.open(store_path))
     ds = Loader(
@@ -78,22 +61,10 @@ def benchmark(  # noqa: PLR0917, PLR0913
         preload_to_gpu=preload_to_gpu,
         to_torch=True,
     )
-    ds.use_collection(collection)
+    ds.use_collection(collection, load_adata=load_func)
 
     n_samples = n_samples if n_samples != -1 else len(ds)
-    if use_torch_loader:
-        loader = DataLoader(
-            ds,
-            batch_size=None,
-            num_workers=num_workers,
-            multiprocessing_context="spawn",
-        )
-        samples_per_sec, _, _, total_time = benchmark_loader(
-            loader, n_samples, batch_size
-        )
-    else:
-        samples_per_sec, _, _, total_time = benchmark_loader(ds, n_samples, batch_size)
-
+    samples_per_sec, _, _, total_time = benchmark_loader(ds, n_samples, batch_size)
     click.echo(
         json.dumps(
             {

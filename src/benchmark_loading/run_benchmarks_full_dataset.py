@@ -42,7 +42,6 @@ arrayloaders = run_benchmark([
     f"--store_path={STORE_PATH_ZARR}",
     "--chunk_size=256",
     "--preload_nchunks=32",
-    "--use_torch_loader=False",
     "--preload_to_gpu=False",
     f"--n_samples={N_SAMPLES}"
 ], "annbatch")
@@ -53,7 +52,6 @@ arrayloaders_gpu = run_benchmark([
     f"--store_path={STORE_PATH_ZARR}",
     "--chunk_size=256",
     "--preload_nchunks=32",
-    "--use_torch_loader=False",
     "--preload_to_gpu=True",
     f"--n_samples={N_SAMPLES}"
 ], "annbatch (GPU)")
@@ -62,7 +60,7 @@ arrayloaders_gpu = run_benchmark([
 scdataset = run_benchmark([
     "python", f"{REPO_PATH}/src/benchmark_loading/arrayloader_benchmarks/scDataset/benchmark_scDataset.py",
     f"--store_path={STORE_PATH_H5AD}",
-    "--num_workers=8",
+    "--num_workers=6",
     "--batch_size=4096",
     "--block_size=4",
     "--fetch_factor=2",
