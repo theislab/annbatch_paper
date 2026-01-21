@@ -38,7 +38,6 @@ def run_single_benchmark_process(args):
             f"--store_path={STORE_PATH_ZARR}",
             "--chunk_size=256",
             "--preload_nchunks=32",
-            "--use_torch_loader=False",
             "--preload_to_gpu=False",
             f"--n_samples={n_samples}"
         ]
@@ -48,7 +47,6 @@ def run_single_benchmark_process(args):
             f"--store_path={STORE_PATH_ZARR}",
             "--chunk_size=256",
             "--preload_nchunks=32",
-            "--use_torch_loader=False",
             "--preload_to_gpu=True",
             f"--n_samples={n_samples}"
         ]

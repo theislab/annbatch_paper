@@ -5,12 +5,9 @@ import warnings
 
 import anndata as ad
 import click
-import numpy as np
-import scipy.sparse as sp
 import zarr
 import zarrs  # noqa
 from annbatch import DatasetCollection, Loader
-from torch.utils.dlpack import from_dlpack
 
 from arrayloader_benchmarks.utils import benchmark_loader
 
@@ -23,12 +20,6 @@ warnings.filterwarnings(
     category=UserWarning,
     module="zarr.codecs.vlen_utf8",
 )
-
-
-def collate_fn(elems):
-    batch_x = sp.vstack([v[0] for v in elems])
-    batch_obs = np.concatenate([v[1] for v in elems])
-    return from_dlpack(batch_x), from_dlpack(batch_obs)
 
 
 @click.command()
