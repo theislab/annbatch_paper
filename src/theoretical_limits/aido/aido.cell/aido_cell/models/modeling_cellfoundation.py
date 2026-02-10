@@ -38,9 +38,12 @@ from transformers.modeling_outputs import (
 from transformers.modeling_utils import PreTrainedModel
 from transformers.pytorch_utils import (
     apply_chunking_to_forward,
-    find_pruneable_heads_and_indices,
     prune_linear_layer,
 )
+try:
+    from transformers.pytorch_utils import find_pruneable_heads_and_indices
+except ImportError:
+    from transformers.utils import find_pruneable_heads_and_indices
 from transformers.utils import (
     ModelOutput,
     add_code_sample_docstrings,

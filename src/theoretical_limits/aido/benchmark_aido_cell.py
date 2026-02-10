@@ -168,9 +168,8 @@ def train_model(model_name, num_classes, learning_rate, batch_size, input_dim, n
     """
     res = {"sleep": [], "fit_time": [], "samples_per_sec": []}
 
-    # Test across different loading speeds
-    # From fast to slow: 4 * 10^(-3) to 4 * 10^1
-    for sleep in 4. * np.logspace(-5, -1, 8):
+    # Single near-zero sleep to measure pure compute time
+    for sleep in [1e-10]:
         # Benchmark loader performance for this sleep time
         loader = create_loader(batch_size, sleep, input_dim, n_classes, n_batches)
         sps, _, _ = benchmark_loader(
@@ -187,7 +186,7 @@ def train_model(model_name, num_classes, learning_rate, batch_size, input_dim, n
         )
 
         trainer = pl.Trainer(
-            max_steps=20,
+            max_steps=200,
             logger=False,
             enable_model_summary=False,
             enable_checkpointing=False,
