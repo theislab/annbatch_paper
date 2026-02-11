@@ -164,15 +164,16 @@ def train_model(model_name, num_classes, learning_rate, batch_size, input_dim, n
         accumulate_grad_batches: Number of batches to accumulate gradients
 
     Returns:
-        DataFrame with sleep times, fit times, and loading speeds
+        DataFrame with sleep times, fit times, data loading throughput, and training throughput
     """
-    res = {"sleep": [], "fit_time": [], "samples_per_sec": []}
+    max_steps = 200
+    res = {"sleep": [], "fit_time": [], "loading_samples_per_sec": [], "training_samples_per_sec": []}
 
     # Single near-zero sleep to measure pure compute time
     for sleep in [1e-10]:
         # Benchmark loader performance for this sleep time
         loader = create_loader(batch_size, sleep, input_dim, n_classes, n_batches)
-        sps, _, _ = benchmark_loader(
+        loading_sps, _, _ = benchmark_loader(
             loader,
             batch_size * n_batches,
             batch_size
@@ -186,7 +187,7 @@ def train_model(model_name, num_classes, learning_rate, batch_size, input_dim, n
         )
 
         trainer = pl.Trainer(
-            max_steps=200,
+            max_steps=max_steps,
             logger=False,
             enable_model_summary=False,
             enable_checkpointing=False,
@@ -206,9 +207,15 @@ def train_model(model_name, num_classes, learning_rate, batch_size, input_dim, n
         )
         elapsed = time.time() - start
 
+        # Compute training throughput from actual training time
+        # Each optimizer step processes accumulate_grad_batches batches
+        total_samples = max_steps * accumulate_grad_batches * batch_size
+        training_sps = total_samples / elapsed
+
         res["fit_time"].append(elapsed)
         res["sleep"].append(sleep)
-        res["samples_per_sec"].append(sps)
+        res["loading_samples_per_sec"].append(loading_sps)
+        res["training_samples_per_sec"].append(training_sps)
 
         # Clean up resources to prevent leaks
         del model
