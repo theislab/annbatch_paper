@@ -1,6 +1,6 @@
 # Dockerfile for AIDO.Cell-10M Benchmark
 # Focused environment for running the AIDO Cell benchmark with multi-GPU support
-FROM nvidia/cuda:13.1.1-cudnn-runtime-ubuntu24.04
+FROM nvidia/cuda:12.8.1-cudnn-runtime-ubuntu24.04
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
@@ -11,14 +11,16 @@ ENV CUDA_HOME=/usr/local/cuda
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     python3-pip \
+    python3-venv \
     python3-dev \
     git \
     build-essential \
     vim \
     && rm -rf /var/lib/apt/lists/*
 
-# Create symlinks for python
-RUN ln -s /usr/bin/python3 /usr/bin/python
+# Create a virtual environment to avoid PEP 668 externally-managed-environment error
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
 # Upgrade pip
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel

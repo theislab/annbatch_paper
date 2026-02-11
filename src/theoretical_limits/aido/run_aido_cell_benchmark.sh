@@ -103,7 +103,7 @@ else
     echo "Found $N_GPUS GPU(s)"
     DEVICES=$N_GPUS
     if [ $N_GPUS -eq 1 ]; then
-        STRATEGY="auto"
+        STRATEGY="ddp"
     else
         STRATEGY="ddp_spawn"
     fi
