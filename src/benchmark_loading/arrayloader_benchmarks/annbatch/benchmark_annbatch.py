@@ -48,10 +48,16 @@ def benchmark(  # noqa: PLR0917, PLR0913
         else:
             X = X_store
 
-        return ad.AnnData(
-            X=X,
-            obs=ad.io.read_elem(g["obs"])[["cell_name"]],
-        )
+        obs = ad.io.read_elem(g["obs"])
+
+        if "cell_name" in obs.columns:
+            obs = obs[["cell_name"]]
+        else:
+            obs = obs.copy()
+            obs["cell_name"] = obs.index.astype(str)
+            obs = obs[["cell_name"]]
+
+        return ad.AnnData(X=X, obs=obs)
 
     collection = DatasetCollection(zarr.open(store_path))
     ds = Loader(
