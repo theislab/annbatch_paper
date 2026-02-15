@@ -38,9 +38,19 @@ def benchmark(  # noqa: PLR0917, PLR0913
     n_samples: int = 2_000_000,
 ):
     def load_func(g: zarr.Group) -> ad.AnnData:
+        X_store = g["X"]
+
+        if isinstance(X_store, zarr.Group) and "encoding-type" in X_store.attrs:
+            if X_store.attrs["encoding-type"] in {"csr_matrix", "csc_matrix"}:
+                X = ad.io.sparse_dataset(X_store)
+            else:
+                X = X_store
+        else:
+            X = X_store
+
         return ad.AnnData(
-            X=ad.io.sparse_dataset(g["X"]),
-            obs=ad.io.read_elem(g["obs"])[["cell_name"]]
+            X=X,
+            obs=ad.io.read_elem(g["obs"])[["cell_name"]],
         )
 
     collection = DatasetCollection(zarr.open(store_path))
