@@ -5,7 +5,7 @@ from pathlib import Path
 import anndata as ad
 import lamindb as ln
 import pandas as pd
-from annbatch import create_anndata_collection
+from annbatch import DatasetCollection
 
 # Set paths where to store the output h5ad files below
 OUT_PATH = Path("/mnt/dssfs02/tahoe100M")
@@ -40,12 +40,10 @@ if __name__ == "__main__":
     print("Creating h5ads with full gene space...")
     try:
         OUT_PATH.mkdir(parents=True)
-        create_anndata_collection(
+        collection = DatasetCollection(OUT_PATH, mode="w", is_collection_h5ad=True)
+        collection.add_adatas(
             file_paths,
-            OUT_PATH,
-            n_obs_per_dataset=2**21,
-            output_format="h5ad",
-            should_denseify=False,
+            dataset_size=2**21,
         )
     except FileExistsError:
         print("Preprocessed h5ads already exist, skipping creation...")

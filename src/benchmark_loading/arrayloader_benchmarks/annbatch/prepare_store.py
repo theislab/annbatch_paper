@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import lamindb as ln
 import zarr
 import zarrs  # noqa
-from annbatch import create_anndata_collection
+from annbatch import DatasetCollection
 from zarr.codecs import BloscCodec, BloscShuffle
 
 if TYPE_CHECKING:
@@ -33,10 +33,9 @@ STORE_PATH: Path = Path("/dss/mcmlscratch/04/di93zer/tahoe100_FULL")
 GENE_SPACE: Literal["FULL", "PROTEIN_CODING"] = "FULL"
 N_SHARDS_INPUT: int = 48
 assert 0 < N_SHARDS_INPUT <= 48, "N_SHARDS_INPUT must be between 1 and 48."
-SHOULD_DENSIFY: bool = False
-ZARR_CHUNK_SIZE: int = 32768
-ZARR_SHARD_SIZE: int = 134_217_728
-ANNDATA_SHARD_SIZE: int = 2_097_152
+N_OBS_PER_CHUNK: int = 32
+SHARD_SIZE: int = 98304
+DATASET_SIZE: int = 2_097_152
 COMPRESSOR = BloscCodec(cname="lz4", clevel=3, shuffle=BloscShuffle.shuffle)
 UPLOAD_TO_LAMINDB = False
 
@@ -62,15 +61,14 @@ if __name__ == "__main__":
         raise ValueError(err_msg)
 
     if not STORE_PATH.exists():
-        create_anndata_collection(
+        collection = DatasetCollection(STORE_PATH, mode="w")
+        collection.add_adatas(
             [h5ads_paths / f"shard_{i}.h5ad" for i in range(N_SHARDS_INPUT)],
-            STORE_PATH,
-            zarr_sparse_chunk_size=ZARR_CHUNK_SIZE,
-            zarr_sparse_shard_size=ZARR_SHARD_SIZE,
-            n_obs_per_dataset=ANNDATA_SHARD_SIZE,
+            n_obs_per_chunk=N_OBS_PER_CHUNK,
+            shard_size=SHARD_SIZE,
+            dataset_size=DATASET_SIZE,
             zarr_compressor=(COMPRESSOR,),
             shuffle=False,
-            should_denseify=SHOULD_DENSIFY,
         )
     else:
         print(f"Store already exists at {STORE_PATH}, skipping creation...")
