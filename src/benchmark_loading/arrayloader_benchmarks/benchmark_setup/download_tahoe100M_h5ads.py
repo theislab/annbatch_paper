@@ -54,18 +54,20 @@ def main() -> None:
 
     for uid in ARTIFACT_UIDS:
         artifact = benchmarking_artifacts.get(uid)
-        cached_path = Path(artifact.cache())
-        destination = output_dir / cached_path.name
+        destination = output_dir / artifact.key.rsplit("/", 1)[-1]
+        cached_path = None
 
         try:
             if destination.exists() and not OVERWRITE_EXISTING:
                 print(f"Skipping existing file: {destination}")
             else:
+                cached_path = Path(artifact.cache())
+                destination = output_dir / cached_path.name
                 shutil.copy2(cached_path, destination)
                 print(f"Downloaded {uid} -> {destination}")
 
             if zarr_output_dir is not None:
-                zarr_destination = zarr_output_dir / f"{cached_path.stem}.zarr"
+                zarr_destination = zarr_output_dir / f"{destination.stem}.zarr"
                 if zarr_destination.exists():
                     if OVERWRITE_EXISTING:
                         shutil.rmtree(zarr_destination)
@@ -76,7 +78,7 @@ def main() -> None:
                 ad.read_h5ad(destination).write_zarr(zarr_destination)
                 print(f"Converted {destination} -> {zarr_destination}")
         finally:
-            if REMOVE_FROM_CACHE:
+            if REMOVE_FROM_CACHE and cached_path is not None:
                 remove_cached_path(cached_path)
                 print(f"Removed cached file: {cached_path}")
 
