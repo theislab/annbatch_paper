@@ -1,0 +1,18 @@
+dataset,loader,samples_per_sec
+common_snps,annbatch (chunk_size=64),906.393510
+common_snps,annbatch (chunk_size=128),913.420364
+common_snps,annbatch (chunk_size=256),821.044575
+common_snps,annbatch (chunk_size=512),800.460748
+common_snps,Numpy MemMap,38.538612
+rare_snps_0.1_maf,annbatch (chunk_size=128),2335.172434
+rare_snps_0.1_maf,annbatch (chunk_size=256),2349.276695
+rare_snps_0.1_maf,annbatch (chunk_size=512),2302.819469
+rare_snps_0.1_maf,MappedCollection,56.827747
+rare_snps_0.1_maf,scDataset (recommended settings),554.232101
+rare_snps_0.1_maf,scDataset (annbatch matched settings),830.878208
+rare_snps_1_maf,annbatch (chunk_size=128),611.527871
+rare_snps_1_maf,annbatch (chunk_size=256),614.655277
+rare_snps_1_maf,annbatch (chunk_size=512),590.534938
+rare_snps_1_maf,MappedCollection,34.172378
+rare_snps_1_maf,scDataset (recommended settings),171.099698
+rare_snps_1_maf,scDataset (annbatch matched settings),191.241196
