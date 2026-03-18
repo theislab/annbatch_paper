@@ -38,9 +38,13 @@ def benchmark(  # noqa: PLR0917, PLR0913
     n_samples: int = 2_000_000,
 ):
     def load_func(g: zarr.Group) -> ad.AnnData:
+        obs_df = ad.io.read_elem(g["obs"])
+        
+        obs_column = "cell_name" if "cell_name" in obs_df.columns else obs_df.columns[0]
+        
         return ad.AnnData(
             X=ad.io.sparse_dataset(g["X"]),
-            obs=ad.io.read_elem(g["obs"])[["cell_name"]]
+            obs=obs_df[[obs_column]]
         )
 
     collection = DatasetCollection(zarr.open(store_path))
