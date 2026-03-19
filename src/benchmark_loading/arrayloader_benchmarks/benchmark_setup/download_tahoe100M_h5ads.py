@@ -4,7 +4,6 @@ import shutil
 from pathlib import Path
 
 import anndata as ad
-import lamindb as ln
 
 
 ARTIFACT_UIDS = [
@@ -27,6 +26,8 @@ ARTIFACT_UIDS = [
 # Set the output path and behavior below.
 OUT_PATH_H5AD = Path("/vol/data/annbatch_benchmark/tahoe100M/raw_h5ad")
 OUT_PATH_ZARR = Path("/vol/data/annbatch_benchmark/tahoe100M/raw_zarr")
+RUN_DOWNLOAD = False
+RUN_ZARR_CONVERSION = True
 OVERWRITE_EXISTING = False
 REMOVE_FROM_CACHE = True
 LAMIN_INSTANCE = "laminlabs/arrayloader-benchmarks"
@@ -41,14 +42,8 @@ def remove_cached_path(cached_path: Path) -> None:
         cached_path.unlink()
 
 
-def main() -> None:
-    output_dir = OUT_PATH_H5AD.expanduser().resolve()
-    output_dir.mkdir(parents=True, exist_ok=True)
-    zarr_output_dir = (
-        OUT_PATH_ZARR.expanduser().resolve() if OUT_PATH_ZARR is not None else None
-    )
-    if zarr_output_dir is not None:
-        zarr_output_dir.mkdir(parents=True, exist_ok=True)
+def download_h5ad_files(output_dir: Path) -> None:
+    import lamindb as ln
 
     benchmarking_artifacts = ln.Artifact.using(LAMIN_INSTANCE)
 
@@ -60,27 +55,48 @@ def main() -> None:
         try:
             if destination.exists() and not OVERWRITE_EXISTING:
                 print(f"Skipping existing file: {destination}")
-            else:
-                cached_path = Path(artifact.cache())
-                destination = output_dir / cached_path.name
-                shutil.copy2(cached_path, destination)
-                print(f"Downloaded {uid} -> {destination}")
+                continue
 
-            if zarr_output_dir is not None:
-                zarr_destination = zarr_output_dir / f"{destination.stem}.zarr"
-                if zarr_destination.exists():
-                    if OVERWRITE_EXISTING:
-                        shutil.rmtree(zarr_destination)
-                    else:
-                        print(f"Skipping existing zarr: {zarr_destination}")
-                        continue
-
-                ad.read_h5ad(destination).write_zarr(zarr_destination)
-                print(f"Converted {destination} -> {zarr_destination}")
+            cached_path = Path(artifact.cache())
+            destination = output_dir / cached_path.name
+            shutil.copy2(cached_path, destination)
+            print(f"Downloaded {uid} -> {destination}")
         finally:
             if REMOVE_FROM_CACHE and cached_path is not None:
                 remove_cached_path(cached_path)
                 print(f"Removed cached file: {cached_path}")
+
+
+def convert_h5ad_to_zarr_files(h5ad_dir: Path, zarr_output_dir: Path) -> None:
+    for h5ad_path in sorted(h5ad_dir.glob("*.h5ad")):
+        zarr_destination = zarr_output_dir / f"{h5ad_path.stem}.zarr"
+        if zarr_destination.exists():
+            if OVERWRITE_EXISTING:
+                shutil.rmtree(zarr_destination)
+            else:
+                print(f"Skipping existing zarr: {zarr_destination}")
+                continue
+
+        ad.read_h5ad(h5ad_path).write_zarr(zarr_destination)
+        print(f"Converted {h5ad_path} -> {zarr_destination}")
+
+
+def main() -> None:
+    output_dir = OUT_PATH_H5AD.expanduser().resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
+    zarr_output_dir = (
+        OUT_PATH_ZARR.expanduser().resolve() if OUT_PATH_ZARR is not None else None
+    )
+    if zarr_output_dir is not None:
+        zarr_output_dir.mkdir(parents=True, exist_ok=True)
+
+    if RUN_DOWNLOAD:
+        download_h5ad_files(output_dir)
+
+    if RUN_ZARR_CONVERSION:
+        if zarr_output_dir is None:
+            raise ValueError("OUT_PATH_ZARR must be set when RUN_ZARR_CONVERSION is True.")
+        convert_h5ad_to_zarr_files(output_dir, zarr_output_dir)
 
 
 if __name__ == "__main__":
