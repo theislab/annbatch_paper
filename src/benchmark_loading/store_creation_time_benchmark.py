@@ -7,7 +7,7 @@ from pathlib import Path
 INPUT_PATH_H5AD = Path("/vol/data/annbatch_benchmark/tahoe100M/raw_h5ad")
 INPUT_PATH_ZARR = Path("/vol/data/annbatch_benchmark/tahoe100M/raw_zarr")
 OUTPUT_PATH_ZARR = Path("/vol/data/annbatch_benchmark/tahoe100M/zarr_shuffled")
-OUTPUT_PATH_H5AD = Path("/dss/mcmlscratch/04/di93zer/h5ad_shuffled")
+OUTPUT_PATH_H5AD = Path("/vol/data/annbatch_benchmark/tahoe100M/h5ad_shuffled")
 OUTPUT_PATH_ZARR_TO_ZARR = Path(
     "/vol/data/annbatch_benchmark/tahoe100M/zarr_to_zarr_shuffled"
 )
