@@ -59,7 +59,11 @@ def run_store_creation(
         output_path,
         mode="w",
         is_collection_h5ad=is_collection_h5ad,
-    ).add_adatas(input_paths)
+    ).add_adatas(
+        input_paths,
+        dataset_size=2_097_152,
+        n_obs_per_chunk=32,
+    )
     return time.time() - start_time
 
 
