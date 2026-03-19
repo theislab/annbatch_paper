@@ -9,7 +9,7 @@ RUN pip install \
     ipywidgets \
     ipykernel \
     lamindb \
-    scDatasetscDataset \
+    scDataset \
     annbatch["zarrs", "torch"] \
     anndata \
     scanpy \
