@@ -8,14 +8,8 @@ import pandas as pd
 from pathlib import Path
 
 
-REPO_PATH = Path(__file__).resolve().parent.parent.parent
-STORE_PATH_ZARR = Path("/dss/mcmlscratch/04/di93zer/tahoe100M")
-STORE_PATH_H5AD = Path("/dss/mcmlscratch/04/di93zer/tahoe100M_h5ad")
-
-
-# Install packages
-subprocess.run([sys.executable, "-m", "pip", "install", "-q", "-e", REPO_PATH], check=True)
-subprocess.run([sys.executable, "-m", "pip", "install", "-q", "lamindb"], check=True)
+STORE_PATH_ZARR = Path("/vol/data/annbatch_benchmark/tahoe100M/zarr_shuffled")
+STORE_PATH_H5AD = Path("/vol/data/annbatch_benchmark/tahoe100M/h5ad_shuffled")
 
 
 def run_benchmark(cmd, name):
@@ -33,7 +27,7 @@ def run_benchmark(cmd, name):
         return None
 
 
-N_SAMPLES = 2_000_000
+N_SAMPLES = 100_000_000  # Run on all 100Mio cells
 
 print("Running benchmarks on full dataset...")
 # Benchmark annbatch without GPU
