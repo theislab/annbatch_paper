@@ -40,7 +40,7 @@ print("Running benchmarks on full dataset...")
 arrayloaders = run_benchmark([
     "python", f"{REPO_PATH}/src/benchmark_loading/arrayloader_benchmarks/annbatch/benchmark_annbatch.py",
     f"--store_path={STORE_PATH_ZARR}",
-    "--chunk_size=256",
+    "--chunk_size=512",
     "--preload_nchunks=32",
     "--preload_to_gpu=False",
     f"--n_samples={N_SAMPLES}"
@@ -50,7 +50,7 @@ arrayloaders = run_benchmark([
 arrayloaders_gpu = run_benchmark([
     "python", f"{REPO_PATH}/src/benchmark_loading/arrayloader_benchmarks/annbatch/benchmark_annbatch.py",
     f"--store_path={STORE_PATH_ZARR}",
-    "--chunk_size=256",
+    "--chunk_size=512",
     "--preload_nchunks=32",
     "--preload_to_gpu=True",
     f"--n_samples={N_SAMPLES}"
