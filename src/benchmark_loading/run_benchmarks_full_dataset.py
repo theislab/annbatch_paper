@@ -32,7 +32,7 @@ N_SAMPLES = 100_000_000  # Run on all 100Mio cells
 print("Running benchmarks on full dataset...")
 # Benchmark annbatch without GPU
 arrayloaders = run_benchmark([
-    "python", f"{REPO_PATH}/src/benchmark_loading/arrayloader_benchmarks/annbatch/benchmark_annbatch.py",
+    "python", "arrayloader_benchmarks/annbatch/benchmark_annbatch.py",
     f"--store_path={STORE_PATH_ZARR}",
     "--chunk_size=512",
     "--preload_nchunks=32",
@@ -42,7 +42,7 @@ arrayloaders = run_benchmark([
 
 # Benchmark annbatch with GPU
 arrayloaders_gpu = run_benchmark([
-    "python", f"{REPO_PATH}/src/benchmark_loading/arrayloader_benchmarks/annbatch/benchmark_annbatch.py",
+    "python", "arrayloader_benchmarks/annbatch/benchmark_annbatch.py",
     f"--store_path={STORE_PATH_ZARR}",
     "--chunk_size=512",
     "--preload_nchunks=32",
@@ -52,7 +52,7 @@ arrayloaders_gpu = run_benchmark([
 
 # Benchmark scDataset
 scdataset = run_benchmark([
-    "python", f"{REPO_PATH}/src/benchmark_loading/arrayloader_benchmarks/scDataset/benchmark_scDataset.py",
+    "python", "arrayloader_benchmarks/scDataset/benchmark_scDataset.py",
     f"--store_path={STORE_PATH_H5AD}",
     "--num_workers=6",
     "--batch_size=4096",
@@ -63,7 +63,7 @@ scdataset = run_benchmark([
 
 # Benchmark MappedCollection
 mapped_collection = run_benchmark([
-    "python", f"{REPO_PATH}/src/benchmark_loading/arrayloader_benchmarks/mapped_collection/benchmark_mapped_collection.py",
+    "python", "arrayloader_benchmarks/mapped_collection/benchmark_mapped_collection.py",
     f"--store_path={STORE_PATH_H5AD}",
     "--num_workers=8",
     f"--n_samples={N_SAMPLES}"
