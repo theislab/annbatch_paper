@@ -74,7 +74,7 @@ mapped_collection = run_benchmark([
 results = [r for r in [arrayloaders, arrayloaders_gpu, scdataset, mapped_collection] if r is not None]
 if results:
     res = pd.DataFrame(results)
-    res.to_csv(f"{REPO_PATH}/src/benchmark_loading/loading_times_full_epoch_2mio_samples.csv", index=False)
+    res.to_csv("loading_times_full_epoch_2mio_samples.csv", index=False)
     print(f"Saved {len(results)} benchmark results")
 else:
     print("No successful benchmarks to save")
