@@ -62,7 +62,6 @@ def benchmark(  # noqa: PLR0917
         batch_size=batch_size,
         fetch_factor=fetch_factor,
         fetch_callback=fetch_adata,
-        multiprocessing_context=multiprocessing_context,
     )
 
     loader = DataLoader(
@@ -70,6 +69,7 @@ def benchmark(  # noqa: PLR0917
         batch_size=None,
         num_workers=num_workers,
         prefetch_factor=fetch_factor + 1,
+        multiprocessing_context=multiprocessing_context,
     )
 
     samples_per_sec, _, _, total_time = benchmark_loader(loader, n_samples, batch_size)
