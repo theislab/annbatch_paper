@@ -7,12 +7,14 @@ import anndata as ad
 import click
 from scdataset import BlockShuffling, scDataset
 from torch.utils.data import DataLoader
+import zarr
 
 from arrayloader_benchmarks.utils import benchmark_loader
 
 
 @click.command()
 @click.option("--store_path", type=str, default="")
+@click.option("--store_type", type=str, default="h5ad")
 @click.option("--block_size", type=int, default=4)
 @click.option("--fetch_factor", type=int, default=16)
 @click.option("--num_workers", type=int, default=6)
@@ -21,6 +23,7 @@ from arrayloader_benchmarks.utils import benchmark_loader
 @click.option("--multiprocessing_context", type=str, default="fork")
 def benchmark(  # noqa: PLR0917
     store_path: str = "",
+    store_type: str = "h5ad",
     block_size: int = 4,
     fetch_factor: int = 16,
     num_workers: int = 6,
@@ -29,18 +32,25 @@ def benchmark(  # noqa: PLR0917
     multiprocessing_context: str = "fork",
 ):
     if store_path:
-        h5ad_shards = list(Path(store_path).glob("*.h5ad"))
+        if store_type == "h5ad":
+            shards = list(Path(store_path).glob("*.h5ad"))
+        elif store_type == "zarr":
+            shards = [p for p in Path(store_path).iterdir() if p.is_dir()]
+        else:
+            raise ValueError(f"Unknown store type: {store_type}")
     else:
         import lamindb as ln
 
         benchmarking_collections = ln.Collection.using(
             "laminlabs/arrayloader-benchmarks"
         )
-        h5ad_shards = benchmarking_collections.get("eAgoduHMxuDs5Wem0000").cache()
+        shards = benchmarking_collections.get("eAgoduHMxuDs5Wem0000").cache()
 
-    adata_collection = ad.experimental.AnnCollection(
-        [ad.read_h5ad(shard, backed="r") for shard in h5ad_shards]
-    )
+    if store_type == "zarr":
+        adatas = [ad.AnnData(X=ad.io.sparse_dataset(zarr.open(shard, mode="r")["X"])) for shard in shards]
+    else:
+        adatas = [ad.read_h5ad(shard, backed="r") for shard in shards]
+    adata_collection = ad.experimental.AnnCollection(adatas)
 
     def fetch_adata(collection, indices):
         return collection[indices].X
