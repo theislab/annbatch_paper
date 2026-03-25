@@ -1,0 +1,9 @@
+loader,samples/sec
+annbatch (chunk_size=64),23164.01712985015
+annbatch (chunk_size=128),29758.370564857705
+annbatch (chunk_size=256),34265.97570459475
+annbatch (chunk_size=512),35007.23403382923
+annbatch (GPU),35812.0438494987
+MappedCollection,852.5874964847992
+scDataset (recommended settings),1494.8052171850566
+scDataset (annbatch matched settings),17933.122392184283

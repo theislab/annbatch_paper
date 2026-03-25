@@ -1,5 +1,9 @@
-loader,samples/sec,total_time
-AnnBatch,58515.1987605614,34.15946340560913
-AnnBatch (GPU),61578.3446286315,32.46023917198181
-scDataset,3978.916354247227,502.35989022254944
-MappedCollection,1772.3611745248293,1127.7881858348846
+loader,samples/sec
+annbatch (chunk_size=64),36105.55313837123
+annbatch (chunk_size=128),44169.93670323333
+annbatch (chunk_size=256),51618.77520406477
+annbatch (chunk_size=512),54469.62571534467
+annbatch (GPU),83578.99769788743
+MappedCollection,1107.9764873478719
+scDataset (recommended settings),1646.8910246620324
+scDataset (annbatch matched settings),19619.49772167297

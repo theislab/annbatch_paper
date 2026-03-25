@@ -1,3 +1,4 @@
-format,store_creation_time
-zarr,6.724527440203561
-h5ad,15.242786535819372
+benchmark,format,store_creation_time_seconds,store_creation_time_hours,n_input_files,output_path
+h5ad-to-h5ad,h5ad -> h5ad,43998.39834475517,12.221777317987549,14,/vol/data/annbatch_benchmark/tahoe100M/h5ad_shuffled
+h5ad-to-zarr,h5ad -> zarr,20367.500064611435,5.657638906836509,14,/vol/data/annbatch_benchmark/tahoe100M/zarr_shuffled
+zarr-to-zarr,zarr -> zarr,12848.490972995758,3.5690252702765997,14,/vol/data/annbatch_benchmark/tahoe100M/zarr_to_zarr_shuffled
