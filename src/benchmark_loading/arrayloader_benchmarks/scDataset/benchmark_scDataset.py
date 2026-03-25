@@ -12,6 +12,10 @@ import zarr
 from arrayloader_benchmarks.utils import benchmark_loader
 
 
+def fetch_adata(collection, indices):
+    return collection[indices].X
+
+
 @click.command()
 @click.option("--store_path", type=str, default="")
 @click.option("--store_type", type=str, default="h5ad")
@@ -51,9 +55,6 @@ def benchmark(  # noqa: PLR0917
     else:
         adatas = [ad.read_h5ad(shard, backed="r") for shard in shards]
     adata_collection = ad.experimental.AnnCollection(adatas)
-
-    def fetch_adata(collection, indices):
-        return collection[indices].X
 
     strategy = BlockShuffling(block_size=block_size)
     dataset = scDataset(
