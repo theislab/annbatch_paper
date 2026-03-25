@@ -18,6 +18,7 @@ from arrayloader_benchmarks.utils import benchmark_loader
 @click.option("--num_workers", type=int, default=6)
 @click.option("--batch_size", type=int, default=4096)
 @click.option("--n_samples", type=int, default=2_000_000)
+@click.option("--multiprocessing_context", type=str, default="fork")
 def benchmark(  # noqa: PLR0917
     store_path: str = "",
     block_size: int = 4,
@@ -25,6 +26,7 @@ def benchmark(  # noqa: PLR0917
     num_workers: int = 6,
     batch_size: int = 4096,
     n_samples: int = 2_000_000,
+    multiprocessing_context: str = "fork",
 ):
     if store_path:
         h5ad_shards = list(Path(store_path).glob("*.h5ad"))
@@ -50,6 +52,7 @@ def benchmark(  # noqa: PLR0917
         batch_size=batch_size,
         fetch_factor=fetch_factor,
         fetch_callback=fetch_adata,
+        multiprocessing_context=multiprocessing_context,
     )
 
     loader = DataLoader(
