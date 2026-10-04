@@ -1,0 +1,27 @@
+# Data locations on the cluster the revision experiments were run on.
+# Every script in `revision/scripts/` reads this file via `_common.load_config()`.
+# Entries marked TODO were not part of the code drop and still need the real path.
+
+repo: /ictstr01/groups/ml01/workspace/lucas.arnoldt/projects/annbatch_paper
+results: /ictstr01/groups/ml01/workspace/lucas.arnoldt/projects/annbatch_paper/revision/results
+storage_pool: null                       # TODO: Lustre pool name the benchmark data must live on, if enforced
+
+tahoe:
+  plates_dir: TODO                       # one AnnData Zarr store per plate
+  plate_glob: TODO                       # formatted with the plate number, e.g. "plate{i}.zarr"
+  train_plates: TODO                     # list of plate numbers (12 train plates)
+  test_plates: TODO                      # list of plate numbers (2 test plates)
+  preshuffled: TODO                      # written by 00_preshuffle_tahoe.py
+  labels_dir: TODO                       # written by 01_build_label_tables.py
+  drug_metadata: TODO                    # parquet
+
+wgs:
+  timing_scratch: TODO                   # 41_wgs_preshuffle_timing.py writes its output here
+  common:
+    h5ad: TODO
+    memmap: /lustre/boost_ai/users/selman.ozleyen/annbatch/common_memmap   # with a sibling `.meta.json`
+    preshuffled_zarr: TODO
+  rare_maf_0.01:
+    h5ad: TODO
+  rare_maf_0.001:
+    h5ad: TODO

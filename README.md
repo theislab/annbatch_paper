@@ -18,6 +18,7 @@ before model compute, rather than I/O, becomes the bottleneck.
 │   ├── benchmark_store_creation/  # store creation timing (legacy notebook)
 │   ├── theoretical_limits/        # how fast does loading need to be? (model fit-time benchmarks)
 │   └── scportrait_benchmark.ipynb # single-cell imaging example
+├── revision/                      # additional experiments for the reviewer response (see revision/README.md)
 └── figure_plots/                  # everything that produces figures
     ├── source_data/               # CSVs collected from the benchmark runs
     ├── paper_figures.ipynb        # builds all paper figures from source_data/
